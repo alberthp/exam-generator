@@ -1,0 +1,70 @@
+exam:
+  title: "LSDS 2023/24 - Questionnaire 1"
+  description: 
+    - Each exam is different, do not copy! 
+    - Some questions have more than one correct answer, please mark \textbf{all} the correct ones 
+    - Some questions have a single answer
+    - In both cases, a correct answer is worth 1 point, an incorrect or partially correct one is worth -0.33, a no answer is worth 0
+    - The total will be weighted over 10
+    - The test duration is 30 minutes (45 for Inclusion students)
+  edition: Ed. 2023/24
+  institution: Universitat Pompeu Fabra
+  course: Large Scale Distributed Systems
+  questions:
+    - full-question:
+      question: what is a?
+      answers:
+        wrong:
+        - a is blah
+        - a is bleh
+        - a is blih
+        correct:
+        - a is bloh
+        - a is bluh
+    - full-question:
+      question: what is b?
+      answers:
+        wrong:
+        - b is blah
+        - b is bleh
+        - b is blih
+        correct:
+        - b is bloh
+        - b is bluh
+    - full-question:
+      question: what is c?
+      answers:
+        wrong:
+        - c is blah
+        - c is bleh
+        - c is blih
+        correct:
+        - c is bloh
+    - full-question:
+      question: what is d?
+      answers:
+        wrong:
+        - c is blah
+        - c is bleh
+        - c is blih
+        correct:
+        - c is bloh
+    - full-question:
+      question: what is e?
+      answers:
+        wrong:
+        - c is blah
+        - c is bleh
+        - c is blih
+        correct:
+        - c is bloh
+    - full-question:
+      question: what is f?
+      answers:
+        wrong:
+        - c is blah
+        - c is bleh
+        - c is blih
+        correct:
+        - c is bloh
+
