@@ -54,6 +54,9 @@ def make_exam(yaml, max_answers=4):
     descr = yaml['description']
     tex = [ 
         "\\usepackage{tcolorbox}",
+        "\\usepackage{listings}",
+        "\lstset{basicstyle=\\ttfamily,breaklines=true}",
+        "\lstset{framextopmargin=50pt,frame=bottomline}",
         "\\renewcommand\labelitemi{-}",
         "\pagestyle{headandfoot}",
         "\\runningheadrule",
@@ -63,16 +66,16 @@ def make_exam(yaml, max_answers=4):
         "\\runningfootrule",
         "\\runningfooter{\\today}{" + institution + "}{\\thepage\,/\,\\numpages}",
         "\\usepackage{etoolbox}",
-        "\BeforeBeginEnvironment{checkboxes}{\\vspace*{0.5cm}\par\\nopagebreak\minipage{\linewidth}}",
-        "\AfterEndEnvironment{checkboxes}{\\vspace*{0.5cm}\endminipage}"
+        "\BeforeBeginEnvironment{checkboxes}{\\vspace*{0.25cm}\par\\nopagebreak\minipage{\linewidth}}",
+        "\AfterEndEnvironment{checkboxes}{\\vspace*{0.25cm}\endminipage}"
         "\\begin{document}",
         "\\begin{tcolorbox}[width=\\textwidth]",
         "\section*{\centering " + title + "}",
         "\end{tcolorbox}",
-        "\\vspace{1cm}"
+        "\\vspace{0.5cm}"
           ]   
     tex += make_descr(descr)
-    tex += ["\\vspace{2cm}"]
+    tex += ["\\vspace{1cm}", "\par\\noindent\\rule{\\textwidth}{0.4pt}"]
     tex += make_questions(yaml, max_answers)
     tex += [ "\end{document}" ]
     questions_tex = [ "\documentclass[addpoints,12pt]{exam}" ] + tex
