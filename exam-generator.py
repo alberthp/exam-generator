@@ -55,6 +55,7 @@ def make_exam(yaml, max_answers=4):
     tex = [ 
         "\\usepackage{tcolorbox}",
         "\\usepackage{listings}",
+        "\\usepackage{tikz}",
         "\lstset{basicstyle=\\ttfamily,breaklines=true}",
         "\lstset{framextopmargin=50pt,frame=bottomline}",
         "\\renewcommand\labelitemi{-}",
@@ -72,14 +73,23 @@ def make_exam(yaml, max_answers=4):
         "\\begin{tcolorbox}[width=\\textwidth]",
         "\section*{\centering " + title + "}",
         "\end{tcolorbox}",
-        "\\vspace{0.5cm}"
+        "\\vspace{0.1in}",
+        "\\thispagestyle{empty}",
+        "\\begin{tikzpicture}[remember picture, overlay]",
+        "\\node[below left] (coin)  at (16,4)",
+        "{\\begin{tabular}{l p{7cm}}",
+        "Name \& Student ID: & \\hrule \\\\",
+        "\end{tabular}",
+        "};"
+        "\end{tikzpicture}",
+        "\\vspace{0.5cm}",
           ]   
     tex += make_descr(descr)
     tex += ["\\vspace{1cm}", "\par\\noindent\\rule{\\textwidth}{0.4pt}"]
     tex += make_questions(yaml, max_answers)
     tex += [ "\end{document}" ]
-    questions_tex = [ "\documentclass[addpoints,12pt]{exam}" ] + tex
-    answers_tex = [ "\documentclass[answers,addpoints,12pt]{exam}" ] + tex
+    questions_tex = [ "\documentclass[addpoints,11pt]{exam}" ] + tex
+    answers_tex = [ "\documentclass[answers,addpoints,11pt]{exam}" ] + tex
     return (questions_tex, answers_tex)
 
 def print_tex(tex, outfile):
@@ -87,14 +97,12 @@ def print_tex(tex, outfile):
         for line in tex:
             o.write(f"{line}\n")
 
-
 parser = argparse.ArgumentParser(description='Create exam and answers from a template.')
 parser.add_argument('input', type=str, help='the input YAML file')
 parser.add_argument('prefix', type=str, help='prefix for the output files')
 parser.add_argument('--versions', type=int, default=1,
                     help='number of versions to produce')
 args = parser.parse_args(sys.argv[1:])
-print(args)
 content = read_yaml(args.input)
 latex_cmd = "/Library/TeX/texbin/pdflatex" 
 
