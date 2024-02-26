@@ -11,16 +11,23 @@ def read_yaml(fname):
         content = yaml.safe_load(f.read())
         return content
 
-def make_question(question, answers, max_answers): 
+def make_question(question, answers, max_answers, infomap): 
     ca = answers['correct']
     wa = answers['wrong']
     catex = list(map(lambda s: "    \CorrectChoice{" + s + "}", ca))
     watex = list(map(lambda s: f"    \\choice {s}", random.sample(wa, max_answers - len(ca))))
     print(catex)
     print(watex)
+    ncorr = len(ca)
+    if ncorr in infomap:
+        current = infomap[ncorr]
+    else:
+        current = 0
+    infomap[ncorr] = current + 1
     fatex = catex + watex
     random.shuffle(fatex)
     tex = [
+        "\\filbreak",
         f"  \question {question}",
         "  \\begin{checkboxes}"
     ]
@@ -32,12 +39,16 @@ def make_question(question, answers, max_answers):
 def make_questions(yaml, max_answers):
     tex = ["\\begin{questions}"]
     questions = []
+    infomap = {}
     for question in yaml['questions']:
-        questions.append(make_question(question['question'], question['answers'], max_answers))
+        questions.append(make_question(question['question'], question['answers'], max_answers, infomap))
     random.shuffle(questions)
     for question in questions:
         tex += question
     tex += ["\end{questions}"]
+    print("----------------------------- Question Distribution")
+    for k, v in infomap.items():
+        print(f"# of Questions with {k} correct answers: {v}")
     return tex
 
 def make_descr(yaml):
@@ -46,12 +57,15 @@ def make_descr(yaml):
     tex += ["\\end{itemize}"]
     return tex
 
-def make_exam(yaml, max_answers=4):
+def make_exam(yaml, version, max_answers=4):
     title = yaml['title']
     institution = yaml['institution']
     course = yaml['course']
     edition = yaml['edition']
     descr = yaml['description']
+    date = yaml['date']
+    hash_parts = yaml['hash'].split(',')
+    hash_version = hash_parts[0] + str(version) + hash_parts[1]
     tex = [ 
         "\\usepackage{tcolorbox}",
         "\\usepackage{listings}",
@@ -63,9 +77,9 @@ def make_exam(yaml, max_answers=4):
         "\\runningheadrule",
         "\\runningheader{" + course + "}{}{" + edition + "}",
         "\\firstpagefootrule",
-        "\\firstpagefooter{\\today}{" + institution + "}{\\thepage\,/\,\\numpages}",
+        "\\firstpagefooter{" + date + "}{" + institution + "}{\\thepage\,/\,\\numpages}",
         "\\runningfootrule",
-        "\\runningfooter{\\today}{" + institution + "}{\\thepage\,/\,\\numpages}",
+        "\\runningfooter{" + date + "}{" + hash_version + "}{\\thepage\,/\,\\numpages}",
         "\\usepackage{etoolbox}",
         "\BeforeBeginEnvironment{checkboxes}{\\vspace*{0.25cm}\par\\nopagebreak\minipage{\linewidth}}",
         "\AfterEndEnvironment{checkboxes}{\\vspace*{0.25cm}\endminipage}"
@@ -107,7 +121,7 @@ content = read_yaml(args.input)
 latex_cmd = "/Library/TeX/texbin/pdflatex" 
 
 for version in range(0, args.versions):
-  (questions, answers) = make_exam(content['exam'])
+  (questions, answers) = make_exam(content['exam'], version=version)
   questions_file = f"{args.prefix}-questions-v{version}.tex"
   answers_file = f"{args.prefix}-answers-v{version}.tex"
   print_tex(questions, questions_file) 
