@@ -36,12 +36,22 @@ def make_question(question, answers, max_answers, infomap):
     tex.append("\\vspace{0.5cm}")
     return tex
 
+def make_open_question(question):
+    return [
+        "\\filbreak",
+        f"  \question {question}",
+        "\makeemptybox{10cm}"
+        ]
+
 def make_questions(yaml, max_answers):
     tex = ["\\begin{questions}"]
     questions = []
     infomap = {}
     for question in yaml['questions']:
-        questions.append(make_question(question['question'], question['answers'], max_answers, infomap))
+        if('full-question' in question):
+          questions.append(make_question(question['question'], question['answers'], max_answers, infomap))
+        if('open-question' in question):
+          questions.append(make_open_question(question['question']))
     random.shuffle(questions)
     for question in questions:
         tex += question
