@@ -6,6 +6,8 @@ import random
 import subprocess
 import argparse
 
+log_lines = []
+
 def read_yaml(fname):
     with open(fname, 'r') as f:
         content = yaml.safe_load(f.read())
@@ -45,20 +47,28 @@ def make_open_question(question):
 
 def make_questions(yaml, max_answers):
     tex = ["\\begin{questions}"]
-    questions = []
+    full_questions = []
+    open_questions = []
     infomap = {}
-    for question in yaml['questions']:
-        if('full-question' in question):
-          questions.append(make_question(question['question'], question['answers'], max_answers, infomap))
-        if('open-question' in question):
-          questions.append(make_open_question(question['question']))
-    random.shuffle(questions)
-    for question in questions:
+    open = 0
+    for fullq in filter(lambda q: 'full-question' in q and 'skip' not in q, yaml['questions']):
+          full_questions.append(make_question(fullq['question'], fullq['answers'], max_answers, infomap))
+    for openq in filter(lambda q: 'open-question' in q and 'skip' not in q, yaml['questions']):
+          open_questions.append(make_open_question(openq['question']))
+          open += 1
+    random.shuffle(full_questions)
+    random.shuffle(open_questions)
+    for question in full_questions:
+        tex += question
+    tex += ["\\newpage"]
+    for question in  open_questions:
         tex += question
     tex += ["\end{questions}"]
-    print("----------------------------- Question Distribution")
+    global log_lines 
+    log_lines += ["--- Question Distribution"]
     for k, v in infomap.items():
-        print(f"# of Questions with {k} correct answers: {v}")
+        log_lines += [f"# of Questions with {k} correct answers: {v}"]
+    log_lines += [f"Open Questions: {open}"]
     return tex
 
 def make_descr(yaml):
@@ -140,3 +150,6 @@ for version in range(0, args.versions):
   subprocess.run([latex_cmd, questions_file])
   subprocess.run([latex_cmd, answers_file])
   subprocess.run([latex_cmd, answers_file])
+
+for line in log_lines:
+    print(line)
