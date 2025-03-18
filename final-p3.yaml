@@ -1,0 +1,181 @@
+exam:
+  title: "Large Scale Distributed Systems\\\\Final Exam - Part 3\\\\Realtime systems \\& Kafka"
+  description: 
+    - The exam is divided in two parts, a test part and an open response part.
+    - The total duration is 40 minutes (60 for inclusion students).
+    - The test part contains 10 questions; they account for 80\% of the total score.
+    - The open response part contains 1 question; it accounts for the remaining 20\%.
+    - Test questions have \textbf{one or more} correct answer(s), mark \textbf{all} the correct ones.
+    - Each correct answer scores $+\frac{1}{Exp}$, where Exp is the total number of expected answers for the question.
+    - Each wrong answer scores $-\frac{1}{4 - Exp}$, where Exp is the total number of expected answers for the question.
+    - Write \textbf{clear}, \textbf{concise} and \textbf{complete} answers for the open response question.
+    - Answer test questions in the separate answer sheet.
+    - Write your DNI in the answer sheet header.
+    - Write your U-code in the answer sheet header. Add zeros to the left to fill all squares.
+  edition: Ed. 2024/25
+  institution: Universitat Pompeu Fabra
+  course: Large Scale Distributed Systems
+  date: 19/03/2025
+  hash: 4ddc,307ff11d0427da6457c010712de9
+  questions:
+    - open-question: 
+      question: |
+        DataDog is a service which:
+        - allows ingesting metrics in realtime from many customer servers like CPU, error count, memory used, ...
+        - allows defining monitors which send alarms when a metric exceeds a defined threshold
+
+        Design a system like DataDog leveraging Kafka and describe it in detail:
+        - Diagram the system, clearly showing which services are horizontally scaled, the dependencies between them, Kafka topics, etc.
+        - What will be the key and values produced in each topic
+        - Which services will produce to which topics and which services will consume from which topics
+        - How will you configure consumer groups
+        - How will you scale the system when the amount of ingested metrics grows
+        - What happens if one of the servers dies
+        - ...
+
+    - full-question:
+      question: |
+        Why does Kafka divide topics in partitions?
+      answers:
+        wrong:
+        - Because messages are always processed in sequential order between different partitions.
+        - Because partitions remove the need for replication in Kafka by scaling out.
+        - Because partitions prevent message loss if the broker dies by scaling out.
+        - Because partitions allow removing the need for data replication across brokers, saving storage space.
+        correct:
+        - Because partitions allow increasing the throughput of records being produced to the topic by scaling out.
+        - Because partitions allow increasing the throughput of records being consumed from the topic by scaling out.
+        - Because partitions allow increasing the availability of a topic by scaling out.
+
+    - full-question:
+      question: |
+        What can you guarantee about two records R1{KEY1, BODY1} and R2{KEY2, BODY2}?
+      answers:
+        wrong:
+        - If KEY1 is not equal to KEY2, they are in the same partition.
+        - If KEY1 is not equal to KEY2, they are in different partitions.
+        - If KAFKA_HASH(KEY1) is not equal to KAFKA_HASH(KEY2), they are in the same partition.
+        - If KEY1 is equal to KEY2, they are in different partitions.
+        correct:
+        - If KEY1 is equal to KEY2, they are in the same partition.
+        - If KAFKA_HASH(KEY1) is not equal to KAFKA_HASH(KEY2), they are in different partitions.
+
+    - full-question:
+      question: |
+        What is true about consumer groups in Kafka?
+      answers:
+        wrong:
+        - If two consumers are in the same consumer group, they receive the same records from the broker.
+        - If two consumers are in the same consumer group, they consume from the same partitions.
+        - When a consumer is added to a consumer group, it starts reading the partition from the beginning.
+        - When a consumer is removed from a consumer group, some partitions are not read by any consumer until a new consumer is added to the consumer group.
+        correct:
+        - If two consumers are in the same consumer group, they consume from different partitions.
+        - If a consumer is in a consumer group without any other consumers, it consumes all partitions of the topic.
+
+    - full-question:
+      question: |
+        What is true about compacted topics (key-based policy)?
+      answers:
+        wrong:
+        - Kafka delete the latest record in the topic for a given key when a later record with the same key is present in another partition.
+        - Kafka never deletes the earliest record in the topic for a given key.
+        - Kafka regularly deletes any record which is not the earliest with a given key.
+        - Kafka deletes records that have been stored longer than the retention period, regardless of the key.
+        correct:
+        - Kafka never deletes the latest record in the topic for a given key.
+        - Kafka regularly deletes any record which is not the latest with a given key.
+
+    - full-question:
+      question: |
+        How can you scale a topic with a growing number of producers and throughput of produced records?
+      answers:
+        wrong:
+        - Reduce topic partition count.
+        - Optimize producers to always produce a hardcoded key.
+        - Change producers to produce every record with one of the following keys depending on the record importance (high-priority, standard-priority or low-priority).
+        correct:
+        - Increase topic partition count.
+        - Scale out brokers.
+        - Scale up brokers.      
+        
+    - full-question:
+      question: |
+        Which of the following statements are \emph{correct} regarding partitions offsets?
+      answers:
+        wrong:
+        - Brokers compute the offset of the next message to consume.       
+        - Message stored in Kafka can be accessed by consumers using the associated message id (unique identifier)
+        - Offsets are distributed across brokers' partitions of the same topic.
+        - Brokers manage consumer offsets by automatically advancing them after each message is read.
+        correct:
+        - Each message stored in Kafka is addressed by its offset within its partition log.
+        - Offsets are assigned sequentially within each partition and are unique to that partition.
+    
+    - full-question:
+      question: |
+        Which of the following statements are \emph{correct} regarding consumers?
+      answers:
+        wrong:
+        - Consumers can access randomly to partition messages providing high flexibility 
+        - Message stored in Kafka can be accessed by consumers using the associated message id
+        - Consumers use a round-robin strategy to consume messages from all partitions in a topic
+        - Consumers automatically distribute themselves across all partitions in a topic
+        correct:
+        - Consumers compute the offset of the next message to consume.
+        - Consumers consume messages from a partition in a sequential manner.
+        - Consumers subscribed to multiple topics maintain separate offets for each topic
+           
+    - full-question:
+      question: | 
+        Questions about consumer groups
+      answers:
+        wrong:
+        - Consumers communicate directly with each other to coordinate message consumption.
+        - Having more consumers than partitions always improves throughput because it allows for greater parallel processing of messages.
+        - Kafka automatically adapts (horizontal scaling) the number of partitions (NP) based on the available number of consumers (NC) of a group, maximizing efficiency
+        - A single consumer can belong to multiple consumer groups simultaneously when requires data from multiple topics.
+        - Consumer groups are a way to ensure that all messages in a topic are consumed exactly once.
+        correct:
+        - If the number of consumers (NC) of a group is greater than the number of partitions (NP), then, there are NP-NC consumers idle.
+        - Consumers from a consumer group cannot ensure data ordering even Kafka ensures Partition-Level Ordering
+    
+    - full-question:
+      question: | 
+        Wich of the following statements about Kafka Topic Management is \emph{correct}
+      answers:
+        wrong:
+        - Consumers automatically delete messages after consuming them to control logs size 
+        - Consumers negotiate with brokers the log retention policies
+        - Policies `compact` and `delete` cannot be combined in the same partition because `delete` prevents a correct `compact`
+        - Kafka automatically adjusts the retention policy based on disk space usage.
+        correct:
+        - Cleanup policies in Kafka are configured at the topic level (specified per-topic)
+        - When using the `compact` policy, older messages with the same key are eventually removed, but the latest message is retained.
+        - Using `compact` cleanup policy before computing a materialized view increases the computational efficiency
+    
+    - full-question:
+      question: | 
+        Wich of the following statements about Kafka Partition Replication is \emph{correct}
+      answers:
+        wrong:
+        - Performance of the brokers decreases when partition data is segmented.
+        - 
+        correct:
+        - The unit of replication is a partition, not an entire topic, but the replication factor is specified per-topic 
+        - Segments provide a way to organize and access log data efficiently, which is essential for fast broker recovery. 
+            
+    - full-question:
+      question: | 
+        Wich of the following statements about partition leadership is \emph{correct}
+      answers:
+        wrong:
+        - A partition can have multiple leaders at the same time to increase throughput.
+        - Kafka prevents a single failure point (increase availablity) by providing concurrent multiple leaders in a partition
+        - When a new leader is elected, epoch numbers of candidates are reset to start a clean election process if required
+        - If a partition is in the In-Sync Replicas list, it is discarded in the process of leader candidate election
+        - The round-robin election method ensures that all candidates can become leaders, thus balancing nodes workload distribution
+        - Consumers of a consumer group can access partition replicas to increase throughput
+        correct:
+        - In-Sync Replicas and Epoch number are essential criteria to be elected as leader
+        - The minimum quorum value is usually less than or equal to the replication factor.

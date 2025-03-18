@@ -1,0 +1,189 @@
+exam:
+  title: "Large Scale Distributed Systems\\\\Final Exam - Part 2\\\\Map Reduce \\& Spark RDDs"
+  description:
+  - Answer all questions according to how MapReduce is described in the original paper (2004).
+  - Answer all questions according to how Spark is described in the original paper (2012).
+  - The exam is divided in two parts, a test part and an open response part.
+  - The total duration is 40 minutes (60 for inclusion students).
+  - The test part contains 10 questions; they account for 80\% of the total score .
+  - The open response part contains 1 question; it accounts for the remaining 20\%.
+  - Test questions have \textbf{one or more} correct answer(s), mark \textbf{all} the correct ones.
+  - Each correct answer scores $+\frac{1}{Exp}$, where Exp is the total number of expected answers for the question .
+  - Each wrong answer scores $-\frac{1}{4 - Exp}$, where Exp is the total number of expected answers for the question.
+  - Write \textbf{clear}, \textbf{concise} and \textbf{complete} answers for the open response question.
+  - Answer test questions in the separate answer sheet.
+  - Write your DNI in the answer sheet header.
+  - Write your U-code in the answer sheet header. Add zeros to the left to fill all squares.
+  edition: Ed. 2024/25
+  institution: Universitat Pompeu Fabra
+  course: Large Scale Distributed Systems
+  date: 19/03/2025
+  hash: 4ddc,307ff11d0427da6457c010712de9
+  questions:
+  - open-question:
+    question: |
+      Consider the input files representing partitions of the results of a crawler like this one:
+
+      \begin{verbatim}
+        http://wikipedia/cat Cats are awesome animals. And they find ants are lovely.
+        http://wikipedia/dog Dogs are animals that hunt cats and rabbits.
+        http://wikipedia/earth Planet Earth
+      \end{verbatim}
+
+      Each line describes a website and its content.
+
+      Write MapReduce pseudo-code to search every website that contains a specific sequence of characters.
+
+      The output must be the links of the websites that contain the three characters pattern and how many times it contains it.
+
+      For example, if searching for "ts a" the output should be:
+              
+      \begin{verbatim}
+        http://wikipedia/cat 2
+        http://wikipedia/cat 1
+      \end{verbatim}
+
+      You can assume the following methods to exist: 
+      \begin{verbatim}
+        EmitIntermediate(String key, String value):
+        Emit(String value):
+      \end{verbatim}
+
+      Use the following template to write your answer:
+      \begin{verbatim}
+        map(String key, String value):
+          // key: website link
+          // value: website contents
+          // TODO
+
+        reduce(String key, List<String> values):
+          // TODO
+      \end{verbatim}
+
+  - full-question:
+    question: |
+      1 Why is Spark RDD fault-tolerant?
+    answers:
+      wrong:
+      - It always runs the same task simultaneously in multiple workers to ensure success
+      - It materializes every RDD and stores it to a persistent file
+      - It replicates every partition of an RDD to multiple nodes
+      - It keeps RDDs in memory for as long as possible
+      correct:
+      - It re-executes all operations leading to an RDD partition in case of failure
+      - It keeps a graph of the computation that allows to reconstruct current data from previously computed data
+
+  - full-question:
+    question: |
+      2 Which of these methods are \textbf{NOT} part of the MapReduce worker API?
+    answers:
+      wrong:
+      - readIntermediateFile
+      - ping
+      - mapTaskCompletedByAnotherWorker
+      - startMapTask
+      - startReduceTask
+      correct:
+      - reduceTaskCompletedByAnotherWorker
+
+  - full-question:
+    question: |
+      3 When does a MapReduce master start an already assigned task in a new worker?
+    answers:
+      wrong:
+      - When a map task completes that the reduce worker was waiting for.
+      - When the master rebalances tasks periodically across all available workers.
+      - When a worker node completes a different task and requests more work.
+      correct:
+      - When no response to a ping request is received from the original worker in a certain amount of time.
+      - When a MapReduce operation is close to completion, except the task assigned to the original worker.
+
+  - full-question:
+    question: |
+      4 Consider the following file and Spark RDD code:
+
+      \begin{verbatim}
+      1 2 3
+      2 3 4
+      3 4 5
+      \end{verbatim}
+
+      \begin{verbatim}
+      numbers_rdd = sc.textFile("file.txt").map(lambda x: x.split(" "))
+      numbers_int_rdd = numbers_rdd.map(lambda x: int(x))
+      print(numbers_int_rdd.sum())
+      \end{verbatim}
+
+      What is the output?
+    answers:
+      wrong:
+      - 27
+      - 6
+      - 30
+      correct:
+      - It produces an error.
+
+  - full-question:
+    question: |
+      5 When calling rdd1.saveAsTextFile("aloha.txt") in a Spark RDD program, what happens? 
+    answers:
+      wrong:
+      - A file aloha.txt is created with the content of the RDD.
+      - The results of the RDD are saved in one file.
+      - The results of the RDD are saved in as many files as twice the number of partitions.
+      correct:
+      - A folder aloha.txt is created.
+      - One file for each partition of the RDD is created with its content.
+
+  - full-question:
+    question: |
+      6 In MapReduce, how many partitions does the reduce worker read for one reduce task?
+    answers:
+      wrong:
+      - As many as workers in the system.
+      - As many as the number of partitions in the output file of reducers (R).
+      - As many as reduce tasks for the job.
+      correct:
+      - As many as map tasks for the job.
+      - As many as the number of partitions in the input file (M).
+
+  - full-question:
+    question: |
+      7 What is the difference between finding a value using filter on a normal RDD compared to lookup in a key-value RDD?
+    answers:
+      wrong:
+      - Using filter on a normal RDD followed by first() is always faster than lookup.
+      - lookup is inefficient because it forces Spark to materialize the entire dataset in memory.
+      - Using filter on a normal RDD is better because it avoids partitioning overhead.
+      - Using filter on a normal RDD needs to read through all elements of at most one partition.
+      - On a normal RDD, given the number of partitions, we can use a formula to deterministically compute which partition that has any given element.
+      correct:
+      - Given a key and a partitioning function, we can deterministically find the partition that has that key in a key-value RDD.
+      - Lookup on a key-value RDD takes advantage of partitioning and avoids scanning all data.
+
+  - full-question:
+    question: |
+      8 What happens when a worker fails in a MapReduce system?
+    answers:
+      wrong:
+      - When a worker fails, its completed tasks are permanently lost.
+      - Reduce tasks are not affected by worker failures (multiple parallel workers) and do not need rescheduling.
+      - Using filter on a normal RDD is better because it avoids partitioning overhead.
+      - Using filter on a normal RDD needs to read through all elements of at most one partition.
+      - On a normal RDD, given the number of partitions, we can use a formula to deterministically compute which partition that has any given element.
+      correct:
+      - Tasks in progress on a failed worker are reset to idle and become eligible for rescheduling
+      - Any completed map tasks by a failed worker are reset to their initial idle state and can be reassigned.
+
+  - full-question:
+    question: |
+      9 What is the role of a Combiner function in MapReduce?
+    answers:
+      wrong:
+      - A Combiner replaces the reducer and produces the final output of the MapReduce job.
+      - A Combiner is required for every MapReduce job and cannot be omitted.
+      - A Combiner processes data across multiple workers to merge all intermediate results globally.
+      - Combiners are automatically assigned by MapReduce to these nodes with higher intermediate data demand
+      correct:
+      - A Combiner operates locally on the output of a mapper before sending data to reducers.
+      - Typically the same code is used to implement both the combiner and the reduce functions.

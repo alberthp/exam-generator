@@ -9,6 +9,7 @@ A `sample-exam.yaml` file shows how to write a test.
 The script uses LaTeX and the exam package as backend, meaning that you'll need a LaTeX distribution installed on your laptop. 
 
 ## Setup:
+NOTE: the following packages are from the OS, so cannot be included inside a virtual environment. 
 
 <code> sudo apt-get update </code>
 
@@ -19,7 +20,8 @@ The script uses LaTeX and the exam package as backend, meaning that you'll need 
 <code> sudo apt-get install texlive-fonts-extra </code>
 
 
-## Virtual environment creation
+## Virtual environment creation 
+
 
 1. Create a virtual environment
 
@@ -32,15 +34,11 @@ Replace `myenv` with your desired environment name
 * On Linux/macOS: `source myenv/bin/activate`
 * On Windows: `myenv\Scripts\activate`
 
-3. Install the apt dependencies:
 
-`sudo apt-get update`
-
-`sudo apt-get install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra`
 
 ## Execution of the program
 
-`python3 exam_generator.py 2025/q1-t1.yaml q1-t1 --versions 3`
+`python3 exam-generator.py sample-exam.yaml q1-t1 --versions 3`
 
 ## Deactivation of the virtual environment
 `deactivate`

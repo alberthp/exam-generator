@@ -1,0 +1,173 @@
+exam:
+  title: "Large Scale Distributed Systems\\\\Exam 1: Distributed Systems \\& HDFS"
+  description: 
+    - Answer all questions according to how HDFS is described in the original paper (2010).
+    - The exam is divided in two parts, a test part and an open response part.
+    - The total duration is 50 minutes (75 for inclusion students).
+    - The test part contains 10 questions; they account for 80\% of the total score .
+    - The open response part contains 1 question; it accounts for the remaining 20\%.
+    - Test questions have \textbf{one or more} correct answer(s), mark \textbf{all} the correct ones.
+    - Each correct answer scores $+\frac{1}{Exp}$, where Exp is the total number of expected answers for the question .
+    - Each wrong answer scores $-\frac{1}{4 - Exp}$, where Exp is the total number of expected answers for the question.
+    - Write \textbf{clear}, \textbf{concise} and \textbf{complete} answers for the open response question.
+    - Answer test questions in the separate answer sheet.
+    - Write your DNI in the answer sheet header.
+    - Write your U-code in the answer sheet header. Add zeros to the left to fill all squares.
+  edition: Ed. 2024/25
+  institution: Universitat Pompeu Fabra
+  course: Large Scale Distributed Systems - T1
+  date: 23/01/2025
+  hash: 4ddc,307ff11d0427da6457c010712de9
+  questions:
+    - open-question: 
+      question: |
+        Explain all the ordered steps that happen when creating and storing a file in HDFS.
+        
+        Use the following format to clearly indicate steps and how communication flows (the content is just an example):
+        
+        \begin{verbatim}
+        1. InstagramApp -> InstagramService: InstagramApp gets the profile 
+                                            information from InstagramService.
+        2. For each highlight in the retrieved profile:
+          2.1. InstagramApp -> InstagramService: InstagramApp fetches the highlight
+                                                cover image from InstagramService.
+        3. For each post in the retrieved profile:
+          3.1. InstagramApp -> InstagramService: InstagramApp fetches the post image
+                                                from the InstagramService.
+        \end{verbatim}
+
+    - full-question:
+      question: |
+        Which of the following actions can have a \textbf{positive} impact on the availability of HDFS?
+      answers:
+        wrong:
+        - Decrease replication factor.
+        - Scale in the datanodes.
+        - Scale down the datanodes.
+        - Scale down the namenode.
+        correct:
+        - Increase replication factor.
+        - Scale out the datanodes.
+
+    - full-question:
+      question: |
+        How many datanodes can be deployed in a single HDFS?
+      answers:
+        wrong:
+        - Exactly one
+        - Exactly two
+        - Two or more
+        correct:
+        - One or more
+
+    - full-question:
+      question: |
+        Which of the following statements about HDFS is/are \textbf{true} in relation to the image, checkpoint and journal?
+      answers:
+        wrong:
+        - Updating the image is too slow to be performed many times per minute.
+        - Appending to the journal is considered too slow to be performed many times per minute.
+        - Creating a checkpoint is considered fast enough to be performed many times per minute.
+        correct:
+        - Updating the image is considered fast enough to be performed many times per minute.
+        - Creating a checkpoint is considered too slow to be performed many times per minute.
+        - Appending to the journal is considered fast enough to be performed many times per minute.
+
+    - full-question:
+      question: |
+        How does an HDFS client write a block to the system, with a replication factor of N?
+      answers:
+        wrong:
+        - The client sends the block contents through TCP to a datanode of its choice.
+        - The client opens N TCP connections and sends the block to each of them.
+        - The client sends the block to its closest N datanodes, according to node distance.
+        correct:
+        - The client creates a file using the namenode API.
+        - The client opens 1 TCP connection and sends the block to one datanode, regardless of the replication factor.
+
+## This one is tricky 
+    - full-question:
+      question: |
+        In HDFS, what happens if the namenode crashes just \textbf{after} successfully responding to a request from a client to create a new file?
+      answers:
+        wrong:
+        - The file is created because it is guaranteed to be stored in the checkpoint.
+        - The file might not be created because it might not have been stored in the checkpoint when the namenode crashed.
+        - The file might not be created because it might not have been stored in the journal when the namenode crashed.
+        correct:
+        - The file is created because it is guaranteed to be stored in the journal.
+
+    - full-question:
+      question: |
+        \emph{Horizontal scalability} is often preferred to \emph{vertical scalability} because...
+      answers:
+        wrong:
+        - It is easier to add more resources to a single node than to add more nodes to a cluster.
+        - If we add many nodes to a cluster, we'll end up with a system that costs more than a few more powerful nodes.
+        - Off-the-shelf nodes are more expensive than custom-made nodes.
+        - For every node, we can always buy a more powerful processor
+        correct:
+        - Over time, having many cheap computers is more economical that having few but very powerful computers
+        - Adding more nodes might not require to stop the system
+
+    - full-question:
+      question: |
+        Consider an HDFS system with replication factor 3, block size 100MB and a file that weights 320MB. Which of the following statements is/are \textbf{true}?
+      answers:
+        wrong:
+        - The file is divided in 2 blocks.
+        - The file is divided in 3 blocks.
+        - In HDFS, the file occupies around 320MB across datanodes.
+        - In HDFS, the file occupies around 640MB across datanodes.
+        correct:
+        - The file is divided in 4 blocks.
+        - In HDFS, the file occupies around 960MB across datanodes.
+
+    - full-question:
+      question: |
+        In HDFS, how does the namenode initialize the image after a restart?
+      answers:
+        wrong:
+        - It reads from its memory the image that was stored before stopping.
+        - It reads the journal stored in the file system and replays the last checkpoint.
+        - It reads the metadata of all files stored in the system from the block reports.
+        - It waits for the datanodes to send the metadata of all files stored in the system.
+        correct:
+        - It reads the last checkpoint stored in the file system and replays the journal.
+
+    - full-question:
+      question: |
+        Which of the following dependencies exist in HDFS?
+      answers:
+        wrong:
+        - The namenode uses the client API.
+        - The datanode uses the client API.
+        - The namenode uses the datanode API.
+        correct:
+        - The client uses the datanode API.
+        - The datanode uses the namenode API.
+
+    - full-question:
+      question: |
+        In HDFS, what happens when the namenode does not receive a heartbeat from a datanode for more than 10 minutes?
+      answers:
+        wrong:
+        - The namenode reads the block contents from the faulty datanode through TCP and sends it to other datanodes to store the new replicas.
+        - The faulty datanode sends copies of its blocks to other datanodes through TCP for them to store new replicas.
+        - The namenode commands other working datanodes to read replicas of the lost blocks and store a new replica.
+        correct:
+        - The namenode commands other working datanodes that have replicas of the lost blocks to send them to another datanode.
+  
+    - full-question:
+      question: |
+        Which of the following statements about blocks in HDFS is/are \textbf{true}? 
+      answers:
+        wrong:
+        - Block content is mutable, but content can be appended if the block is not full.
+        - Block content is immutable, and content cannot be appended even if the block is not full.
+        - Block sizes are dynamically decided depending on the file content and compression, thus blocks of the same file can have different lenghts.
+        - Blocks that are not full can be split in two blocks if the file is updated.
+        - Blocks that are not full do not calculate the checksum.
+        correct:
+        - All blocks of a file have the same size, except the last one (optionally).
+        - Block content is immutable, but content can be appended if the block is not full.
